@@ -35,10 +35,16 @@ class Calendar
 
     print '   ' * first_day.wday
     first_day.step(last_day) do |date|
-      print date.day.to_s.rjust(2, ' '), ' '
+      print formatted_day(date:)
       puts if date.saturday?
     end
     puts
+  end
+
+  def formatted_day(date:)
+    day_str = date.day.to_s.rjust(2, ' ')
+    day_str = "\e[7m#{day_str}\e[0m " if date == TODAY
+    day_str.ljust(3, ' ')
   end
 end
 
