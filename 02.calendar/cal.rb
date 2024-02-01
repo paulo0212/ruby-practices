@@ -1,15 +1,19 @@
 # frozen_string_literal: true
 
 require 'date'
+require 'optparse'
 
 class Calendar
   DAY_OF_WEEK = 'Su Mo Tu We Th Fr Sa'
   PRINT_WIDTH = DAY_OF_WEEK.length
+  TODAY = Date.today
 
-  attr_reader :target_date, :first_day, :last_day
+  attr_reader :target_date, :target_year, :target_month
 
-  def initialize(target_date = Date.today)
-    @target_date = target_date
+  def initialize(options:)
+    @target_year = options[:y]&.to_i || TODAY.year
+    @target_month = options[:m]&.to_i || TODAY.month
+    @target_date = Date.new(@target_year, @target_month, 1)
   end
 
   def print_calendar
@@ -25,8 +29,8 @@ class Calendar
   end
 
   def print_numbers
-    first_day = Date.new(target_date.year, target_date.month, 1)
-    last_day = Date.new(target_date.year, target_date.month, -1)
+    first_day = Date.new(target_year, target_month, 1)
+    last_day = Date.new(target_year, target_month, -1)
 
     print '   ' * first_day.wday
     first_day.step(last_day) do |date|
@@ -37,5 +41,13 @@ class Calendar
   end
 end
 
-calendar = Calendar.new
+def check_options(options: {})
+  opt = OptionParser.new
+  opt.on('-y', '-y [year]', Integer) { |v| options[:y] = v }
+  opt.on('-m', '-m [month]', Integer) { |v| options[:m] = v }
+  opt.parse!(ARGV)
+  options
+end
+
+calendar = Calendar.new(options: check_options)
 calendar.print_calendar
