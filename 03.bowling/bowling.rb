@@ -27,7 +27,6 @@ class BowlingScoreCalculator
       next unless score == 10 || frame.size == 2
       next if game.size == 9
 
-      frame << 0 if score == 10
       game << frame
       frame = []
     end
@@ -36,15 +35,19 @@ class BowlingScoreCalculator
 
   def calculate_total_score(scores_by_frame:)
     total_score = 0
+    frames = scores_by_frame
 
-    scores_by_frame.each_cons(2) do |scores|
-      total_score += scores[0].sum
-      next unless scores[0].sum == 10
+    frames.size.times do |i|
+      total_score += frames[i].sum
+      next unless frames[i].sum == 10
 
-      total_score += scores[1][0]
-      total_score += scores[1][1] if scores[0][0] == 10
+      next_two_frames = frames.slice(i + 1, 2).flatten
+      next if next_two_frames.empty?
+
+      total_score += next_two_frames[0]
+      total_score += next_two_frames[1] if frames[i][0] == 10
     end
-    total_score += scores_by_frame.last.sum
+    total_score
   end
 end
 
