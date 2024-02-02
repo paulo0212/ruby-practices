@@ -48,6 +48,6 @@ class BowlingScoreCalculator
   end
 end
 
-SCORES_STR = '6,3,9,0,0,3,8,2,7,3,X,9,1,8,0,X,X,1,8'
-calurator = BowlingScoreCalculator.new(SCORES_STR)
+scores_str = ARGV[0]
+calurator = BowlingScoreCalculator.new(scores_str)
 calurator.print_total_score
