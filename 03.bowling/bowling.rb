@@ -8,13 +8,30 @@ class BowlingScoreCalculator
 
   def print_total_score
     scores_by_bowl = split_scores_by_bowl(scores_str: @scores_str)
-    p scores_by_bowl
+    scores_by_frame = group_scores_by_frame(scores_by_bowl:)
+    p scores_by_frame
   end
 
   private
 
   def split_scores_by_bowl(scores_str:)
     scores_str.gsub('X', '10').split(',').map(&:to_i)
+  end
+
+  def group_scores_by_frame(scores_by_bowl:)
+    frame = []
+    game = []
+
+    scores_by_bowl.each do |score|
+      frame << score
+      next unless score == 10 || frame.size == 2
+      next if game.size == 9
+
+      frame << 0 if score == 10
+      game << frame
+      frame = []
+    end
+    game << frame
   end
 end
 
