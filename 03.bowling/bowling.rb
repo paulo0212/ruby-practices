@@ -7,8 +7,14 @@ class BowlingScoreCalculator
   end
 
   def print_total_score
-    # あとで処理を追加する
-    p @scores_str
+    scores_by_bowl = split_scores_by_bowl(scores_str: @scores_str)
+    p scores_by_bowl
+  end
+
+  private
+
+  def split_scores_by_bowl(scores_str:)
+    scores_str.gsub('X', '10').split(',').map(&:to_i)
   end
 end
 
