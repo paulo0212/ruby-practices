@@ -9,7 +9,7 @@ class BowlingScoreCalculator
   def print_total_score
     scores_by_bowl = split_scores_by_bowl(scores_str: @scores_str)
     scores_by_frame = group_scores_by_frame(scores_by_bowl:)
-    p scores_by_frame
+    puts calculate_total_score(scores_by_frame:)
   end
 
   private
@@ -32,6 +32,19 @@ class BowlingScoreCalculator
       frame = []
     end
     game << frame
+  end
+
+  def calculate_total_score(scores_by_frame:)
+    total_score = 0
+
+    scores_by_frame.each_cons(2) do |scores|
+      total_score += scores[0].sum
+      next unless scores[0].sum == 10
+
+      total_score += scores[1][0]
+      total_score += scores[1][1] if scores[0][0] == 10
+    end
+    total_score += scores_by_frame.last.sum
   end
 end
 
