@@ -8,8 +8,6 @@ class Calendar
   DAY_OF_WEEK = 'Su Mo Tu We Th Fr Sa'
   PRINT_WIDTH = DAY_OF_WEEK.length
 
-  attr_reader :target_date, :target_year, :target_month
-
   def initialize(year, month)
     @target_year = year&.to_i || Date.today.year
     @target_month = month&.to_i || Date.today.month
@@ -24,13 +22,13 @@ class Calendar
   private
 
   def print_headers
-    puts target_date.strftime('%B %Y').center(PRINT_WIDTH)
+    puts @target_date.strftime('%B %Y').center(PRINT_WIDTH)
     puts DAY_OF_WEEK
   end
 
   def print_numbers
-    first_day = Date.new(target_year, target_month, 1)
-    last_day = Date.new(target_year, target_month, -1)
+    first_day = Date.new(@target_year, @target_month, 1)
+    last_day = Date.new(@target_year, @target_month, -1)
 
     print '   ' * first_day.wday
     first_day.step(last_day) do |date|
