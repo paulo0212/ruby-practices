@@ -7,18 +7,18 @@ class BowlingScoreCalculator
   end
 
   def print_total_score
-    scores_by_bowl = split_scores_by_bowl(scores_str: @scores_str)
-    scores_by_frame = group_scores_by_frame(scores_by_bowl:)
-    puts calculate_total_score(scores_by_frame:)
+    scores_by_bowl = split_scores_by_bowl(@scores_str)
+    scores_by_frame = group_scores_by_frame(scores_by_bowl)
+    puts calculate_total_score(scores_by_frame)
   end
 
   private
 
-  def split_scores_by_bowl(scores_str:)
+  def split_scores_by_bowl(scores_str)
     scores_str.gsub('X', '10').split(',').map(&:to_i)
   end
 
-  def group_scores_by_frame(scores_by_bowl:)
+  def group_scores_by_frame(scores_by_bowl)
     frame = []
     game = []
 
@@ -33,7 +33,7 @@ class BowlingScoreCalculator
     game << frame
   end
 
-  def calculate_total_score(scores_by_frame:)
+  def calculate_total_score(scores_by_frame)
     total_score = 0
     frames = scores_by_frame
 
