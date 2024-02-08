@@ -48,7 +48,8 @@ class Calendar
   end
 end
 
-def check_options(options: {})
+def parse_options
+  options = {}
   opt = OptionParser.new
   opt.on('-y', '-y [year]', Integer) { |v| options[:y] = v }
   opt.on('-m', '-m [month]', Integer) { |v| options[:m] = v }
@@ -56,5 +57,5 @@ def check_options(options: {})
   options
 end
 
-calendar = Calendar.new(options: check_options)
+calendar = Calendar.new(options: parse_options)
 calendar.print_calendar
