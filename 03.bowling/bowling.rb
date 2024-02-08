@@ -31,6 +31,7 @@ class BowlingScoreCalculator
       frame = []
     end
     game << frame
+    game
   end
 
   def calculate_total_score(scores_by_frame)
