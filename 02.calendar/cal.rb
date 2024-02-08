@@ -11,9 +11,9 @@ class Calendar
 
   attr_reader :target_date, :target_year, :target_month
 
-  def initialize(options:)
-    @target_year = options[:y]&.to_i || TODAY.year
-    @target_month = options[:m]&.to_i || TODAY.month
+  def initialize(year, month)
+    @target_year = year&.to_i || TODAY.year
+    @target_month = month&.to_i || TODAY.month
     @target_date = Date.new(@target_year, @target_month, 1)
   end
 
@@ -57,5 +57,6 @@ def parse_options
   options
 end
 
-calendar = Calendar.new(options: parse_options)
+options = parse_options
+calendar = Calendar.new(options[:y], options[:m])
 calendar.print_calendar
