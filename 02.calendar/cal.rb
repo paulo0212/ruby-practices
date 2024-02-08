@@ -40,8 +40,11 @@ class Calendar
 
   def format_day(date)
     day_str = date.day.to_s.rjust(2, ' ')
-    day_str = "\e[7m#{day_str}\e[0m " if date == Date.today
-    day_str.ljust(3, ' ')
+    if date == Date.today
+      "\e[7m#{day_str}\e[0m "
+    else
+      day_str.ljust(3, ' ')
+    end
   end
 end
 
