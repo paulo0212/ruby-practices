@@ -7,13 +7,12 @@ require 'optparse'
 class Calendar
   DAY_OF_WEEK = 'Su Mo Tu We Th Fr Sa'
   PRINT_WIDTH = DAY_OF_WEEK.length
-  TODAY = Date.today
 
   attr_reader :target_date, :target_year, :target_month
 
   def initialize(year, month)
-    @target_year = year&.to_i || TODAY.year
-    @target_month = month&.to_i || TODAY.month
+    @target_year = year&.to_i || Date.today.year
+    @target_month = month&.to_i || Date.today.month
     @target_date = Date.new(@target_year, @target_month, 1)
   end
 
@@ -43,7 +42,7 @@ class Calendar
 
   def formatted_day(date:)
     day_str = date.day.to_s.rjust(2, ' ')
-    day_str = "\e[7m#{day_str}\e[0m " if date == TODAY
+    day_str = "\e[7m#{day_str}\e[0m " if date == Date.today
     day_str.ljust(3, ' ')
   end
 end
