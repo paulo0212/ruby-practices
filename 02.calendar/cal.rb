@@ -9,9 +9,9 @@ class Calendar
   PRINT_WIDTH = DAY_OF_WEEK.length
 
   def initialize(year, month)
-    @target_year = year&.to_i || Date.today.year
-    @target_month = month&.to_i || Date.today.month
-    @target_date = Date.new(@target_year, @target_month, 1)
+    target_year = year&.to_i || Date.today.year
+    target_month = month&.to_i || Date.today.month
+    @target_date = Date.new(target_year, target_month, 1)
   end
 
   def print_calendar
@@ -27,8 +27,8 @@ class Calendar
   end
 
   def print_numbers
-    first_day = Date.new(@target_year, @target_month, 1)
-    last_day = Date.new(@target_year, @target_month, -1)
+    first_day = Date.new(@target_date.year, @target_date.month, 1)
+    last_day = Date.new(@target_date.year, @target_date.month, -1)
 
     print '   ' * first_day.wday
     first_day.step(last_day) do |date|
