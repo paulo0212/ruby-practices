@@ -8,8 +8,8 @@ class BowlingScore
 
   def print_total_score
     shots = split_scores_by_shot(@scores_str)
-    scores_by_frame = group_scores_by_frame(shots)
-    puts calculate_total_score(scores_by_frame)
+    frames = group_scores_by_frame(shots)
+    puts calculate_total_score(frames)
   end
 
   private
@@ -34,14 +34,14 @@ class BowlingScore
     game
   end
 
-  def calculate_total_score(scores_by_frame)
+  def calculate_total_score(frames)
     total_score = 0
 
-    scores_by_frame.each_with_index do |frame, i|
+    frames.each_with_index do |frame, i|
       total_score += frame.sum
       next unless frame.sum == 10
 
-      next_two_frames = scores_by_frame.slice(i + 1, 2).flatten
+      next_two_frames = frames.slice(i + 1, 2).flatten
       next if next_two_frames.empty?
 
       total_score += next_two_frames[0]
