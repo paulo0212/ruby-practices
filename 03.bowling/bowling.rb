@@ -7,24 +7,24 @@ class BowlingScore
   end
 
   def print_total_score
-    scores_by_bowl = split_scores_by_bowl(@scores_str)
-    scores_by_frame = group_scores_by_frame(scores_by_bowl)
+    shots = split_scores_by_shot(@scores_str)
+    scores_by_frame = group_scores_by_frame(shots)
     puts calculate_total_score(scores_by_frame)
   end
 
   private
 
-  def split_scores_by_bowl(scores_str)
+  def split_scores_by_shot(scores_str)
     scores_str.gsub('X', '10').split(',').map(&:to_i)
   end
 
-  def group_scores_by_frame(scores_by_bowl)
+  def group_scores_by_frame(shots)
     frame = []
     game = []
 
-    scores_by_bowl.each do |score|
-      frame << score
-      next unless score == 10 || frame.size == 2
+    shots.each do |shot|
+      frame << shot
+      next unless shot == 10 || frame.size == 2
       next if game.size == 9
 
       game << frame
