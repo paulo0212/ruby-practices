@@ -27,11 +27,10 @@ class Calendar
   end
 
   def print_body
-    first_date = Date.new(@target_date.year, @target_date.month, 1)
     last_date = Date.new(@target_date.year, @target_date.month, -1)
 
-    print '   ' * first_date.wday
-    first_date.step(last_date) do |date|
+    print '   ' * @target_date.wday
+    @target_date.step(last_date) do |date|
       print format_day(date)
       puts if date.saturday?
     end
