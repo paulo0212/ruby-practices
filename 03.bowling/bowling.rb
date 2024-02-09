@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-class BowlingScoreCalculator
+class BowlingScore
   def initialize(scores_str)
     @scores_str = scores_str
   end
@@ -52,5 +52,5 @@ class BowlingScoreCalculator
 end
 
 scores_str = ARGV[0]
-calurator = BowlingScoreCalculator.new(scores_str)
-calurator.print_total_score
+bowling_score = BowlingScore.new(scores_str)
+bowling_score.print_total_score
