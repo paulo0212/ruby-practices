@@ -5,7 +5,8 @@ def main
   target_dir = Dir.pwd
   pattern = ['*']
   files = Dir.glob(pattern, base: target_dir)
-  list_files(files)
+  ordered_files = files.sort
+  list_files(ordered_files)
 end
 
 def list_files(files)
