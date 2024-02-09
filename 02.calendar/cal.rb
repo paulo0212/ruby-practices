@@ -9,29 +9,29 @@ class Calendar
   PRINT_WIDTH = DAY_OF_WEEK.length
 
   def initialize(year, month)
-    target_year = year&.to_i || Date.today.year
-    target_month = month&.to_i || Date.today.month
-    @target_date = Date.new(target_year, target_month, 1)
+    year = year&.to_i || Date.today.year
+    month = month&.to_i || Date.today.month
+    @target_date = Date.new(year, month, 1)
   end
 
   def print_calendar
-    print_headers
-    print_numbers
+    print_header
+    print_body
   end
 
   private
 
-  def print_headers
+  def print_header
     puts @target_date.strftime('%B %Y').center(PRINT_WIDTH)
     puts DAY_OF_WEEK
   end
 
-  def print_numbers
-    first_day = Date.new(@target_date.year, @target_date.month, 1)
-    last_day = Date.new(@target_date.year, @target_date.month, -1)
+  def print_body
+    first_date = Date.new(@target_date.year, @target_date.month, 1)
+    last_date = Date.new(@target_date.year, @target_date.month, -1)
 
-    print '   ' * first_day.wday
-    first_day.step(last_day) do |date|
+    print '   ' * first_date.wday
+    first_date.step(last_date) do |date|
       print format_day(date)
       puts if date.saturday?
     end
