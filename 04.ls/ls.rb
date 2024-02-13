@@ -11,16 +11,25 @@ end
 
 def list_files(files, cols: 3)
   rows = files.size.ceildiv(cols)
+  files_matrix = transform_into_matrix(files, rows)
+  col_width = measure_longest_file_name(files_matrix)
 
-  rows.times do |row_num|
-    cols.times do |col_num|
-      num = row_num + col_num * rows
-      break if num >= files.size
-
-      print files[num].ljust(20)
+  files_matrix.transpose.each do |row|
+    row.each_with_index do |file_name, i|
+      print file_name&.ljust(col_width[i] + 2)
     end
     print "\n"
   end
+end
+
+def transform_into_matrix(files, cols)
+  matrix = files.each_slice(cols).to_a
+  matrix.last.push('') while matrix.last.size < cols
+  matrix
+end
+
+def measure_longest_file_name(files)
+  files.map { |file| file.max_by(&:length).length }
 end
 
 main
