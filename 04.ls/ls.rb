@@ -13,8 +13,8 @@ def list_files(files, cols: 3)
   files_matrix = transform_into_matrix(files, rows)
   col_width = measure_longest_file_name(files_matrix)
 
-  files_matrix.transpose.each do |files|
-    files.each_with_index do |file, i|
+  files_matrix.transpose.each do |files_row|
+    files_row.each_with_index do |file, i|
       print file&.ljust(col_width[i] + 2)
     end
     print "\n"
