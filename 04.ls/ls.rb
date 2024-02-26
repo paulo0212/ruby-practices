@@ -5,9 +5,9 @@ require 'optparse'
 
 def main(options)
   target_dir = ARGV.first || Dir.pwd
-  pattern =  [['*']]
-  pattern.push(File::FNM_DOTMATCH) if options[:a]
-  files = Dir.glob(*pattern, base: target_dir, sort: true)
+  pattern = ['*']
+  flags = options[:a] ? File::FNM_DOTMATCH : 0
+  files = Dir.glob(pattern, flags, base: target_dir, sort: true)
   list_files(files)
 end
 
