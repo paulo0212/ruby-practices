@@ -8,6 +8,7 @@ def main(options)
   pattern = ['*']
   flags = options[:a] ? File::FNM_DOTMATCH : 0
   files = Dir.glob(pattern, flags, base: target_dir, sort: true)
+  files.reverse! if options[:r]
   list_files(files)
 end
 
@@ -38,6 +39,7 @@ def parsed_options
   options = {}
   opt = OptionParser.new
   opt.on('-a') { |v| options[:a] = v }
+  opt.on('-r') { |v| options[:r] = v }
   opt.parse!(ARGV)
   options
 end
