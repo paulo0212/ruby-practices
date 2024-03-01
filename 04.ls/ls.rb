@@ -1,10 +1,13 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-def main
-  target_dir = Dir.pwd
+require 'optparse'
+
+def main(options)
+  target_dir = ARGV.first || Dir.pwd
   pattern = ['*']
-  files = Dir.glob(pattern, base: target_dir, sort: true)
+  flags = options[:a] ? File::FNM_DOTMATCH : 0
+  files = Dir.glob(pattern, flags, base: target_dir, sort: true)
   list_files(files)
 end
 
@@ -31,4 +34,12 @@ def measure_longest_file_name(files)
   files.map { |file| file.max_by(&:length).length }
 end
 
-main
+def parsed_options
+  options = {}
+  opt = OptionParser.new
+  opt.on('-a') { |v| options[:a] = v }
+  opt.parse!(ARGV)
+  options
+end
+
+main(parsed_options)
