@@ -36,6 +36,7 @@ end
 
 def list_files_in_long_format(files)
   file_stats = get_file_stats(files)
+  col_width = measure_longest_file_name(file_stats.transpose)
 end
 
 def transform_into_matrix(files, cols)
@@ -55,12 +56,12 @@ def get_file_stats(files)
 
     row = []
     row << fs.mode.to_s(8)
-    row << fs.nlink
-    row << Etc.getpwuid(fs.uid).name
-    row << Etc.getgrgid(fs.gid).name
-    row << fs.size
-    row << fs.mtime.month
-    row << fs.mtime.day
+    row << fs.nlink.to_s
+    row << Etc.getpwuid(fs.uid).name.to_s
+    row << Etc.getgrgid(fs.gid).name.to_s
+    row << fs.size.to_s
+    row << fs.mtime.month.to_s
+    row << fs.mtime.day.to_s
     row << fs.mtime.strftime('%R')
     row << file
   end
