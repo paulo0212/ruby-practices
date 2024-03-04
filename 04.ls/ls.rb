@@ -3,9 +3,9 @@
 
 require 'optparse'
 
-def main
-  files = get_files(parsed_options)
-  list_files(files)
+def main(options)
+  files = get_files(options)
+  options[:l] ? list_files_in_long_format(files) : list_files(files)
 end
 
 def get_files(options)
@@ -32,6 +32,10 @@ def list_files(files, cols: 3)
   end
 end
 
+def list_files_in_long_format(files)
+  # long formatでファイル一覧を表示する処理
+end
+
 def transform_into_matrix(files, cols)
   matrix = files.each_slice(cols).to_a
   matrix.last.push('') while matrix.last.size < cols
@@ -47,8 +51,9 @@ def parsed_options
   opt = OptionParser.new
   opt.on('-a') { |v| options[:a] = v }
   opt.on('-r') { |v| options[:r] = v }
+  opt.on('-l') { |v| options[:l] = v }
   opt.parse!(ARGV)
   options
 end
 
-main
+main(parsed_options)
