@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require 'optparse'
+require 'etc'
 
 def main(options)
   Dir.chdir(options[:dir]) if options[:dir]
@@ -34,7 +35,7 @@ def list_files(files, cols: 3)
 end
 
 def list_files_in_long_format(files)
-  # long formatでファイル一覧を表示する処理
+  file_stats = get_file_stats(files)
 end
 
 def transform_into_matrix(files, cols)
@@ -45,6 +46,24 @@ end
 
 def measure_longest_file_name(files)
   files.map { |file| file.max_by(&:length).length }
+end
+
+def get_file_stats(files)
+  files.map do |file|
+    file_path = "#{Dir.pwd}/#{file}"
+    fs = File::Stat.new(file_path)
+
+    row = []
+    row << fs.mode.to_s(8)
+    row << fs.nlink
+    row << Etc.getpwuid(fs.uid).name
+    row << Etc.getgrgid(fs.gid).name
+    row << fs.size
+    row << fs.mtime.month
+    row << fs.mtime.day
+    row << fs.mtime.strftime('%R')
+    row << file
+  end
 end
 
 def parsed_options
