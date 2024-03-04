@@ -3,12 +3,20 @@
 
 require 'optparse'
 
-def main(options)
-  target_dir = ARGV.first || Dir.pwd
+def main
+  files = get_files(parsed_options)
+  list_files(files)
+end
+
+def get_files(options)
   pattern = ['*']
+  target_dir = ARGV.first || Dir.pwd
+  # -a オプション
   flags = options[:a] ? File::FNM_DOTMATCH : 0
   files = Dir.glob(pattern, flags, base: target_dir, sort: true)
-  list_files(files)
+  # -r オプション
+  files.reverse! if options[:r]
+  files
 end
 
 def list_files(files, cols: 3)
@@ -38,8 +46,9 @@ def parsed_options
   options = {}
   opt = OptionParser.new
   opt.on('-a') { |v| options[:a] = v }
+  opt.on('-r') { |v| options[:r] = v }
   opt.parse!(ARGV)
   options
 end
 
-main(parsed_options)
+main
