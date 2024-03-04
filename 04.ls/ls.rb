@@ -4,13 +4,14 @@
 require 'optparse'
 
 def main(options)
+  Dir.chdir(options[:dir]) if options[:dir]
   files = get_files(options)
   options[:l] ? list_files_in_long_format(files) : list_files(files)
 end
 
 def get_files(options)
   pattern = ['*']
-  target_dir = ARGV.first || Dir.pwd
+  target_dir = Dir.pwd
   # -a オプション
   flags = options[:a] ? File::FNM_DOTMATCH : 0
   files = Dir.glob(pattern, flags, base: target_dir, sort: true)
@@ -53,6 +54,7 @@ def parsed_options
   opt.on('-r') { |v| options[:r] = v }
   opt.on('-l') { |v| options[:l] = v }
   opt.parse!(ARGV)
+  options[:dir] = ARGV.first
   options
 end
 
