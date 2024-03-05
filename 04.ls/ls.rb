@@ -64,7 +64,9 @@ end
 def list_files_in_long_format(files)
   file_stats = get_file_stats(files)
   col_width = measure_longest_file_name(file_stats.transpose)
+  total = files.map { |file| File.lstat(file).blocks }.sum
 
+  puts "total #{total}"
   file_stats.each do |file_stat|
     file_stat.each_with_index do |fs, i|
       print i == file_stat.size - 1 ? fs : fs.rjust(col_width[i])
