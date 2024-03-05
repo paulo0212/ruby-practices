@@ -4,6 +4,27 @@
 require 'optparse'
 require 'etc'
 
+FILE_TYPE = {
+  '01': 'p',
+  '02': 'c',
+  '04': 'd',
+  '06': 'b',
+  '10': '-',
+  '12': 'l',
+  '14': 's'
+}.freeze
+
+FILE_MODE = {
+  '0': '---',
+  '1': '--x',
+  '2': '-w-',
+  '3': '-wx',
+  '4': 'r--',
+  '5': 'r-x',
+  '6': 'rw-',
+  '7': 'rwx'
+}.freeze
+
 def main(options)
   Dir.chdir(options[:dir]) if options[:dir]
   files = get_files(options)
@@ -55,7 +76,7 @@ def get_file_stats(files)
     fs = File::Stat.new(file_path)
 
     row = []
-    row << fs.mode.to_s(8)
+    row << convert_to_alphabet_filemode(fs.mode.to_s(8).rjust(6, '0'))
     row << fs.nlink.to_s
     row << Etc.getpwuid(fs.uid).name.to_s
     row << Etc.getgrgid(fs.gid).name.to_s
@@ -65,6 +86,12 @@ def get_file_stats(files)
     row << fs.mtime.strftime('%R')
     row << file
   end
+end
+
+def convert_to_alphabet_filemode(filemode)
+  alphabet = FILE_TYPE[filemode.slice(0, 2).to_sym]
+  3.step(5) { |n| alphabet += FILE_MODE[filemode.slice(n).to_sym] }
+  alphabet
 end
 
 def parsed_options
