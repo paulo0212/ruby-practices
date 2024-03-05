@@ -87,9 +87,7 @@ def get_file_stats(files)
     row << Etc.getpwuid(fs.uid).name.to_s
     row << Etc.getgrgid(fs.gid).name.to_s
     row << fs.size.to_s
-    row << fs.mtime.month.to_s
-    row << fs.mtime.day.to_s
-    row << fs.mtime.strftime('%R')
+    row << fs.mtime.strftime('%-m %_d %R')
     row << file
   end
 end
