@@ -25,6 +25,12 @@ FILE_MODE = {
   '7': 'rwx'
 }.freeze
 
+SPECIAL_MODE_BIT = {
+  '1': { position: 9, char: 't' },
+  '2': { position: 6, char: 's' },
+  '4': { position: 3, char: 's' }
+}.freeze
+
 def main(options)
   Dir.chdir(options[:dir]) if options[:dir]
   files = get_files(options)
@@ -76,7 +82,7 @@ def get_file_stats(files)
     fs = File::Stat.new(file_path)
 
     row = []
-    row << convert_to_alphabet_filemode(fs.mode.to_s(8).rjust(6, '0'))
+    row << get_alphabet_filemode(fs)
     row << fs.nlink.to_s
     row << Etc.getpwuid(fs.uid).name.to_s
     row << Etc.getgrgid(fs.gid).name.to_s
@@ -88,10 +94,22 @@ def get_file_stats(files)
   end
 end
 
-def convert_to_alphabet_filemode(filemode)
-  alphabet = FILE_TYPE[filemode.slice(0, 2).to_sym]
-  3.step(5) { |n| alphabet += FILE_MODE[filemode.slice(n).to_sym] }
+def get_alphabet_filemode(file_stat)
+  octal_number = file_stat.mode.to_s(8).rjust(6, '0')
+  # 1-2文字目はファイルタイプ
+  alphabet = FILE_TYPE[octal_number.slice(0, 2).to_sym]
+  # 4-6文字目はファイルモード
+  3.step(5) { |n| alphabet += FILE_MODE[octal_number.slice(n).to_sym] }
+  replace_special_mode_bit(octal_number, alphabet)
   alphabet
+end
+
+def replace_special_mode_bit(octal_number, alphabet)
+  special_mode_bit_number = octal_number.slice(2)
+  return if special_mode_bit_number == '0'
+
+  special_mode_bit = SPECIAL_MODE_BIT[number.to_sym]
+  alphabet[special_mode_bit[:position]] = special_mode_bit[:char]
 end
 
 def parsed_options
