@@ -107,7 +107,7 @@ def get_alphabet_filemode(file_stat)
   # 1-2文字目はファイルタイプ
   alphabet = FILE_TYPE[octal_number.slice(0, 2).to_sym]
   # 4-6文字目はファイルモード
-  3.step(5) { |n| alphabet += FILE_MODE[octal_number.slice(n).to_sym] }
+  alphabet += (3..5).map { FILE_MODE[octal_number[_1].to_sym] }.join
   replace_special_mode_bit(octal_number, alphabet)
   alphabet
 end
