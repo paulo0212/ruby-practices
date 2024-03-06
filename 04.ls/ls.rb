@@ -90,15 +90,15 @@ def get_file_stats(files)
   files.map do |file|
     file_path = "#{Dir.pwd}/#{file}"
     fs = File::Stat.new(file_path)
-
-    row = []
-    row << get_alphabet_filemode(fs)
-    row << fs.nlink.to_s
-    row << Etc.getpwuid(fs.uid).name.to_s
-    row << Etc.getgrgid(fs.gid).name.to_s
-    row << fs.size.to_s
-    row << fs.mtime.strftime('%-m %_d %R')
-    row << file
+    [
+      get_alphabet_filemode(fs),
+      fs.nlink.to_s,
+      Etc.getpwuid(fs.uid).name.to_s,
+      Etc.getgrgid(fs.gid).name.to_s,
+      fs.size.to_s,
+      fs.mtime.strftime('%-m %_d %R'),
+      file
+    ]
   end
 end
 
