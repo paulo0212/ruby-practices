@@ -39,7 +39,8 @@ def main
 end
 
 def existing_file_path?(path)
-  raise Errno::ENOENT, path unless path && File.directory?(path)
+  return false unless path
+  raise Errno::ENOENT, path unless File.directory?(path)
 
   true
 end
