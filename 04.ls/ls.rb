@@ -34,7 +34,14 @@ SPECIAL_MODE_BIT = {
 def main(options)
   Dir.chdir(options[:dir]) if options[:dir]
   files = get_files(options)
-  options[:l] ? list_files_in_long_format(files) : list_files(files)
+  list_files(files, options)
+end
+
+def list_files(files, options)
+  # -r オプション
+  files = files.reverse if options[:r]
+  # -l オプション
+  options[:l] ? list_files_in_long_format(files) : list_files_in_default_format(files)
 end
 
 def get_files(options)
@@ -42,13 +49,10 @@ def get_files(options)
   target_dir = Dir.pwd
   # -a オプション
   flags = options[:a] ? File::FNM_DOTMATCH : 0
-  files = Dir.glob(pattern, flags, base: target_dir, sort: true)
-  # -r オプション
-  files.reverse! if options[:r]
-  files
+  Dir.glob(pattern, flags, base: target_dir, sort: true)
 end
 
-def list_files(files, cols: 3)
+def list_files_in_default_format(files, cols: 3)
   rows = files.size.ceildiv(cols)
   files_matrix = transform_into_matrix(files, rows)
   col_width = measure_longest_file_name(files_matrix)
