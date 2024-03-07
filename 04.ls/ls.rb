@@ -38,30 +38,17 @@ def main
   list_files(files, reverse: options['r'], long: options['l'])
 end
 
-def list_files(files, reverse: false, long: false)
-  # -r オプション
-  files = files.reverse if reverse
-  # -l オプション
-  long ? list_files_in_long_format(files) : list_files_in_default_format(files)
-end
-
 def get_files(dir: Dir.pwd, pattern: '*', all: false)
   # -a オプション
   flags = all ? File::FNM_DOTMATCH : 0
   Dir.glob(pattern, flags, base: dir, sort: true)
 end
 
-def list_files_in_default_format(files, cols: 3)
-  rows = files.size.ceildiv(cols)
-  files_matrix = transform_into_matrix(files, rows)
-  col_width = measure_longest_file_name(files_matrix)
-
-  files_matrix.transpose.each do |files_row|
-    files_row.each_with_index do |file, i|
-      print file&.ljust(col_width[i] + 2)
-    end
-    print "\n"
-  end
+def list_files(files, reverse: false, long: false)
+  # -r オプション
+  files = files.reverse if reverse
+  # -l オプション
+  long ? list_files_in_long_format(files) : list_files_in_default_format(files)
 end
 
 def list_files_in_long_format(files)
@@ -77,16 +64,6 @@ def list_files_in_long_format(files)
     end
     print "\n"
   end
-end
-
-def transform_into_matrix(files, cols)
-  matrix = files.each_slice(cols).to_a
-  matrix.last.push('') while matrix.last.size < cols
-  matrix
-end
-
-def measure_longest_file_name(files)
-  files.map { |file| file.max_by(&:length).length }
 end
 
 def get_file_stats(files)
@@ -121,6 +98,29 @@ def replace_special_mode_bit(octal_number, alphabet)
 
   special_mode_bit = SPECIAL_MODE_BIT[number.to_sym]
   alphabet[special_mode_bit[:position]] = special_mode_bit[:char]
+end
+
+def measure_longest_file_name(files)
+  files.map { |file| file.max_by(&:length).length }
+end
+
+def list_files_in_default_format(files, cols: 3)
+  rows = files.size.ceildiv(cols)
+  files_matrix = transform_into_matrix(files, rows)
+  col_width = measure_longest_file_name(files_matrix)
+
+  files_matrix.transpose.each do |files_row|
+    files_row.each_with_index do |file, i|
+      print file&.ljust(col_width[i] + 2)
+    end
+    print "\n"
+  end
+end
+
+def transform_into_matrix(files, cols)
+  matrix = files.each_slice(cols).to_a
+  matrix.last.push('') while matrix.last.size < cols
+  matrix
 end
 
 main
