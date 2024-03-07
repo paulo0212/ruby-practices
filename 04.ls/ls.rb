@@ -34,20 +34,20 @@ SPECIAL_MODE_BIT = {
 def main
   options = ARGV.getopts('arl')
   target_dir = ARGV.first
-  files = get_files(options, dir: target_dir)
-  list_files(files, options)
+  files = get_files(dir: target_dir, all: options['a'])
+  list_files(files, reverse: options['r'], long: options['l'])
 end
 
-def list_files(files, options)
+def list_files(files, reverse: false, long: false)
   # -r オプション
-  files = files.reverse if options['r']
+  files = files.reverse if reverse
   # -l オプション
-  options['l'] ? list_files_in_long_format(files) : list_files_in_default_format(files)
+  long ? list_files_in_long_format(files) : list_files_in_default_format(files)
 end
 
-def get_files(options, dir: Dir.pwd, pattern: '*')
+def get_files(dir: Dir.pwd, pattern: '*', all: false)
   # -a オプション
-  flags = options['a'] ? File::FNM_DOTMATCH : 0
+  flags = all ? File::FNM_DOTMATCH : 0
   Dir.glob(pattern, flags, base: dir, sort: true)
 end
 
