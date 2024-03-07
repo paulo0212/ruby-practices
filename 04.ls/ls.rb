@@ -33,9 +33,15 @@ SPECIAL_MODE_BIT = {
 
 def main
   options = ARGV.getopts('arl')
-  target_dir = ARGV.first
-  files = get_files(dir: target_dir, all: options['a'])
+  Dir.chdir(ARGV.first) if existing_file_path?(ARGV.first)
+  files = get_files(all: options['a'])
   list_files(files, reverse: options['r'], long: options['l'])
+end
+
+def existing_file_path?(path)
+  raise Errno::ENOENT, path unless path && File.directory?(path)
+
+  true
 end
 
 def get_files(dir: Dir.pwd, pattern: '*', all: false)
@@ -68,8 +74,7 @@ end
 
 def get_file_stats(files)
   files.map do |file|
-    file_path = "#{Dir.pwd}/#{file}"
-    fs = File::Stat.new(file_path)
+    fs = File::Stat.new(file)
     [
       get_alphabet_filemode(fs),
       fs.nlink.to_s,
