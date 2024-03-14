@@ -33,16 +33,17 @@ SPECIAL_MODE_BIT = {
 
 def main
   options = ARGV.getopts('arl')
-  Dir.chdir(ARGV.first) if existing_file_path?(ARGV.first)
+  Dir.chdir(ARGV.first) if existing_directory_path?(ARGV.first)
   files = get_files(all: options['a'])
   list_files(files, reverse: options['r'], long: options['l'])
 end
 
-def existing_file_path?(path)
+def existing_directory_path?(path)
   return false unless path
-  raise Errno::ENOENT, path unless File.directory?(path)
+  return true if File.directory?(path)
 
-  true
+  puts "ls: #{path}: No such file or directory"
+  exit
 end
 
 def get_files(dir: Dir.pwd, pattern: '*', all: false)
