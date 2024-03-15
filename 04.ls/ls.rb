@@ -31,39 +31,37 @@ SPECIAL_MODE_BIT = {
   '4': { position: 3, char: 's' }
 }.freeze
 
-def main(options)
-  Dir.chdir(options[:dir]) if options[:dir]
-  files = get_files(options)
-  options[:l] ? list_files_in_long_format(files) : list_files(files)
+def main
+  options = ARGV.getopts('arl')
+  Dir.chdir(ARGV.first) if existing_directory_path?(ARGV.first)
+  files = get_files(all: options['a'])
+  list_files(files, reverse: options['r'], long: options['l'])
 end
 
-def get_files(options)
-  pattern = ['*']
-  target_dir = Dir.pwd
+def existing_directory_path?(path)
+  return false unless path
+  return true if File.directory?(path)
+
+  puts "ls: #{path}: No such file or directory"
+  exit
+end
+
+def get_files(dir: Dir.pwd, pattern: '*', all: false)
   # -a オプション
-  flags = options[:a] ? File::FNM_DOTMATCH : 0
-  files = Dir.glob(pattern, flags, base: target_dir, sort: true)
-  # -r オプション
-  files.reverse! if options[:r]
-  files
+  flags = all ? File::FNM_DOTMATCH : 0
+  Dir.glob(pattern, flags, base: dir, sort: true)
 end
 
-def list_files(files, cols: 3)
-  rows = files.size.ceildiv(cols)
-  files_matrix = transform_into_matrix(files, rows)
-  col_width = measure_longest_file_name(files_matrix)
-
-  files_matrix.transpose.each do |files_row|
-    files_row.each_with_index do |file, i|
-      print file&.ljust(col_width[i] + 2)
-    end
-    print "\n"
-  end
+def list_files(files, reverse: false, long: false)
+  # -r オプション
+  files = files.reverse if reverse
+  # -l オプション
+  long ? list_files_in_long_format(files) : list_files_in_default_format(files)
 end
 
 def list_files_in_long_format(files)
   file_stats = get_file_stats(files)
-  col_width = measure_longest_file_name(file_stats.transpose)
+  col_width = get_max_char_length(file_stats.transpose)
   total = files.sum { |file| File.lstat(file).blocks }
 
   puts "total #{total}"
@@ -76,20 +74,9 @@ def list_files_in_long_format(files)
   end
 end
 
-def transform_into_matrix(files, cols)
-  matrix = files.each_slice(cols).to_a
-  matrix.last.push('') while matrix.last.size < cols
-  matrix
-end
-
-def measure_longest_file_name(files)
-  files.map { |file| file.max_by(&:length).length }
-end
-
 def get_file_stats(files)
   files.map do |file|
-    file_path = "#{Dir.pwd}/#{file}"
-    fs = File::Stat.new(file_path)
+    fs = File::Stat.new(file)
     [
       get_alphabet_filemode(fs),
       fs.nlink.to_s,
@@ -120,15 +107,27 @@ def replace_special_mode_bit(octal_number, alphabet)
   alphabet[special_mode_bit[:position]] = special_mode_bit[:char]
 end
 
-def parsed_options
-  options = {}
-  opt = OptionParser.new
-  opt.on('-a') { |v| options[:a] = v }
-  opt.on('-r') { |v| options[:r] = v }
-  opt.on('-l') { |v| options[:l] = v }
-  opt.parse!(ARGV)
-  options[:dir] = ARGV.first
-  options
+def get_max_char_length(files)
+  files.map { |file| file.max_by(&:length).length }
 end
 
-main(parsed_options)
+def list_files_in_default_format(files, cols: 3)
+  rows = files.size.ceildiv(cols)
+  files_matrix = transform_into_matrix(files, rows)
+  col_width = get_max_char_length(files_matrix)
+
+  files_matrix.transpose.each do |files_row|
+    files_row.each_with_index do |file, i|
+      print file&.ljust(col_width[i] + 2)
+    end
+    print "\n"
+  end
+end
+
+def transform_into_matrix(files, cols)
+  matrix = files.each_slice(cols).to_a
+  matrix.last.push('') while matrix.last.size < cols
+  matrix
+end
+
+main
