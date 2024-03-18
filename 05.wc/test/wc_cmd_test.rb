@@ -84,4 +84,11 @@ class WcCmdTest < Minitest::Test
     assert_equal expected_count, main(@pathname, lines: true, words: true, chars: true)
     assert_equal expected_total, main(@pathnames, lines: true, words: true, chars: true)
   end
+
+  # 標準入力
+  def test_main_with_stdin
+    expected_count = `ls ./test/fixtures | wc`.chomp
+    $stdin = StringIO.new(`ls ./test/fixtures`)
+    assert_equal expected_count, main([], lines: true, words: true, chars: true)
+  end
 end
