@@ -17,6 +17,13 @@ def wc_stdin(lines: true, words: true, chars: true)
   [build_wc_data($stdin.read, lines:, words:, chars:)]
 end
 
+def build_wc_data(contents, label: nil, lines: true, words: true, chars: true)
+  lines_cnt = lines ? contents.lines.count : nil
+  words_cnt = words ? contents.split(/\s+/).count : nil
+  chars_cnt = chars ? contents.bytesize : nil
+  { label:, lines_cnt:, words_cnt:, chars_cnt: }
+end
+
 def wc_files(pathnames, lines: true, words: true, chars: true)
   count_data = pathnames.map { |p| wc_file(p, lines:, words:, chars:) }
   count_data << build_total_data(count_data, lines:, words:, chars:) if pathnames.count > 1
@@ -33,15 +40,6 @@ def read_file(pathname)
   return { label: "wc: #{pathname}: read: Is a directory" } if pathname.directory?
 
   { contents: File.open(pathname, &:read), label: pathname }
-end
-
-def build_wc_data(contents, label: nil, lines: true, words: true, chars: true)
-  if contents
-    lines_cnt = lines ? contents.lines.count : nil
-    words_cnt = words ? contents.split(/\s+/).count : nil
-    chars_cnt = chars ? contents.bytesize : nil
-  end
-  { label:, lines_cnt:, words_cnt:, chars_cnt: }
 end
 
 def build_total_data(data, lines: true, words: true, chars: true)
