@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'shellwords'
-
 def main(pathnames, lines: true, words: true, chars: true)
   options = manage_options(lines, words, chars)
   count_data = pathnames.count.zero? ? wc_stdin(**options) : wc_files(pathnames, **options)
