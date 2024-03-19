@@ -41,22 +41,23 @@ def build_wc_data(contents, label: nil, lines: true, words: true, chars: true)
     words_cnt = words ? contents.split(/\s+/).count : nil
     chars_cnt = chars ? contents.bytesize : nil
   end
-  { label:, counts: { lines: lines_cnt, words: words_cnt, chars: chars_cnt }.compact }
+  { label:, lines_cnt:, words_cnt:, chars_cnt: }
 end
 
 def build_total_data(data, lines: true, words: true, chars: true)
-  lines = data.sum { |d| d[:counts][:lines].to_i } if lines
-  words = data.sum { |d| d[:counts][:words].to_i } if words
-  chars = data.sum { |d| d[:counts][:chars].to_i } if chars
-  { label: 'total', counts: { lines:, words:, chars: }.compact }
+  lines_cnt = data.sum { |d| d[:lines_cnt].to_i } if lines
+  words_cnt = data.sum { |d| d[:words_cnt].to_i } if words
+  chars_cnt = data.sum { |d| d[:chars_cnt].to_i } if chars
+  { label: 'total', lines_cnt:, words_cnt:, chars_cnt: }
 end
 
-def format_row(label:, counts:)
-  lines = format_count(counts[:lines])
-  words = format_count(counts[:words])
-  chars = format_count(counts[:chars])
-  label = counts.none? || label.nil? ? label : " #{label}"
-  [lines, words, chars, label].join
+def format_row(label: nil, lines_cnt: nil, words_cnt: nil, chars_cnt: nil)
+  lines_str = format_count(lines_cnt)
+  words_str = format_count(words_cnt)
+  chars_str = format_count(chars_cnt)
+  counts_exist = [lines_cnt, words_cnt, chars_cnt].uniq.count > 1
+  label = " #{label}" if counts_exist && label
+  [lines_str, words_str, chars_str, label].join
 end
 
 def format_count(count)
