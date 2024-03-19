@@ -3,7 +3,6 @@
 def main(pathnames, lines: true, words: true, chars: true)
   options = manage_options(lines, words, chars)
   count_data = pathnames.count.zero? ? wc_stdin(**options) : wc_files(pathnames, **options)
-  count_data << build_total_data(count_data, **options) if pathnames.count > 1
   count_data.map { |d| format_row(**d) }.join("\n")
 end
 
@@ -19,10 +18,14 @@ def wc_stdin(lines: true, words: true, chars: true)
 end
 
 def wc_files(pathnames, lines: true, words: true, chars: true)
-  pathnames.map do |pathname|
-    file = read_file(pathname)
-    build_wc_data(file[:contents], label: file[:label], lines:, words:, chars:)
-  end
+  count_data = pathnames.map { |p| wc_file(p, lines:, words:, chars:) }
+  count_data << build_total_data(count_data, lines:, words:, chars:) if pathnames.count > 1
+  count_data
+end
+
+def wc_file(pathname, lines: true, words: true, chars: true)
+  file = read_file(pathname)
+  build_wc_data(file[:contents], label: file[:label], lines:, words:, chars:)
 end
 
 def read_file(pathname)
