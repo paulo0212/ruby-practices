@@ -5,7 +5,7 @@ require 'shellwords'
 def main(pathnames, lines: true, words: true, chars: true)
   options = manage_options(lines, words, chars)
   count_data = pathnames.count.zero? ? wc_stdin(**options) : wc_files(pathnames, **options)
-  count_data << build_total_data(count_data) if pathnames.count > 1
+  count_data << build_total_data(count_data, **options) if pathnames.count > 1
   count_data.map { |d| format_row(**d) }.join("\n")
 end
 
@@ -22,25 +22,31 @@ end
 
 def wc_files(pathnames, lines: true, words: true, chars: true)
   pathnames.map do |pathname|
-    # TODO: 異常系も実装する
-    # 指定パスが存在しない場合 -> `open: No such file or directory`
-    # 指定パスがディレクトリの場合 -> `read: Is a directory`
-    file = File.open(pathname, &:read)
-    build_wc_data(file, label: pathname, lines:, words:, chars:)
+    file = read_file(pathname)
+    build_wc_data(file[:contents], label: file[:label], lines:, words:, chars:)
   end
 end
 
-def build_wc_data(contents, label: nil, lines: true, words: true, chars: true)
-  lines = lines ? contents.lines.count : nil
-  words = words ? contents.split(/\s+/).count : nil
-  chars = chars ? contents.bytesize : nil
-  { label:, counts: { lines:, words:, chars: }.compact }
+def read_file(pathname)
+  return { label: "wc: #{pathname}: open: No such file or directory" } unless pathname.exist?
+  return { label: "wc: #{pathname}: read: Is a directory" } if pathname.directory?
+
+  { contents: File.open(pathname, &:read), label: pathname }
 end
 
-def build_total_data(data)
-  lines = data.sum { |d| d[:counts][:lines] } if data.first[:counts].key?(:lines)
-  words = data.sum { |d| d[:counts][:words] } if data.first[:counts].key?(:words)
-  chars = data.sum { |d| d[:counts][:chars] } if data.first[:counts].key?(:chars)
+def build_wc_data(contents, label: nil, lines: true, words: true, chars: true)
+  if contents
+    lines_cnt = lines ? contents.lines.count : nil
+    words_cnt = words ? contents.split(/\s+/).count : nil
+    chars_cnt = chars ? contents.bytesize : nil
+  end
+  { label:, counts: { lines: lines_cnt, words: words_cnt, chars: chars_cnt }.compact }
+end
+
+def build_total_data(data, lines: true, words: true, chars: true)
+  lines = data.sum { |d| d[:counts][:lines].to_i } if lines
+  words = data.sum { |d| d[:counts][:words].to_i } if words
+  chars = data.sum { |d| d[:counts][:chars].to_i } if chars
   { label: 'total', counts: { lines:, words:, chars: }.compact }
 end
 
@@ -48,7 +54,7 @@ def format_row(label:, counts:)
   lines = format_count(counts[:lines])
   words = format_count(counts[:words])
   chars = format_count(counts[:chars])
-  label = " #{label}" if label
+  label = counts.none? || label.nil? ? label : " #{label}"
   [lines, words, chars, label].join
 end
 
