@@ -52,14 +52,9 @@ def build_total_data(data, lines: true, words: true, chars: true)
 end
 
 def format_row(label: nil, lines_cnt: nil, words_cnt: nil, chars_cnt: nil)
-  lines_str = format_count(lines_cnt)
-  words_str = format_count(words_cnt)
-  chars_str = format_count(chars_cnt)
-  counts_exist = [lines_cnt, words_cnt, chars_cnt].uniq.count > 1
+  counts = [lines_cnt, words_cnt, chars_cnt]
+  counts_str = counts.map { |cnt| cnt ? cnt.to_s.rjust(8, ' ') : '' }
+  counts_exist = counts.uniq.count > 1
   label = " #{label}" if counts_exist && label
-  [lines_str, words_str, chars_str, label].join
-end
-
-def format_count(count)
-  count ? count.to_s.rjust(8, ' ') : ''
+  [*counts_str, label].join
 end
