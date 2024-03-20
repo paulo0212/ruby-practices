@@ -18,9 +18,11 @@ def wc_stdin(lines: true, words: true, chars: true)
 end
 
 def build_wc_data(contents, label: nil, lines: true, words: true, chars: true)
-  lines_cnt = lines ? contents.lines.count : nil
-  words_cnt = words ? contents.split(/\s+/).count : nil
-  chars_cnt = chars ? contents.bytesize : nil
+  if contents
+    lines_cnt = lines ? contents.lines.count : nil
+    words_cnt = words ? contents.split(/\s+/).count : nil
+    chars_cnt = chars ? contents.bytesize : nil
+  end
   { label:, lines_cnt:, words_cnt:, chars_cnt: }
 end
 
@@ -52,7 +54,7 @@ end
 def format_row(label: nil, lines_cnt: nil, words_cnt: nil, chars_cnt: nil)
   counts = [lines_cnt, words_cnt, chars_cnt]
   counts_str = counts.map { |cnt| cnt ? cnt.to_s.rjust(8, ' ') : '' }
-  counts_exist = counts.uniq.count > 1
+  counts_exist = counts.any?(Integer)
   label = " #{label}" if counts_exist && label
   [*counts_str, label].join
 end
