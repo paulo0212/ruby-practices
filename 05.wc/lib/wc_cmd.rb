@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 def main(pathnames, lines: true, words: true, chars: true)
-  options = manage_options(lines, words, chars)
+  options = return_true_if_params_equal(lines, words, chars)
   count_data = pathnames.count.zero? ? wc_stdin(**options) : wc_files(pathnames, **options)
   count_data.map { |d| format_row(**d) }.join("\n")
 end
 
-def manage_options(lines, words, chars)
+def return_true_if_params_equal(lines, words, chars)
   all_params_equal = lines == words && words == chars
   return { lines: true, words: true, chars: true } if all_params_equal
 
