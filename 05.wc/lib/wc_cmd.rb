@@ -1,16 +1,17 @@
 # frozen_string_literal: true
 
 def main(pathnames, lines: true, words: true, chars: true)
-  options = return_true_if_params_equal(lines, words, chars)
+  options = build_options_hash(lines, words, chars)
   count_data = pathnames.count.zero? ? wc_stdin(**options) : wc_files(pathnames, **options)
   count_data.map { |d| format_row(**d) }.join("\n")
 end
 
-def return_true_if_params_equal(lines, words, chars)
-  all_params_equal = lines == words && words == chars
-  return { lines: true, words: true, chars: true } if all_params_equal
-
-  { lines:, words:, chars: }
+def build_options_hash(lines, words, chars)
+  if !lines && !words && !chars
+    { lines: true, words: true, chars: true }
+  else
+    { lines:, words:, chars: }
+  end
 end
 
 def wc_stdin(lines:, words:, chars:)
