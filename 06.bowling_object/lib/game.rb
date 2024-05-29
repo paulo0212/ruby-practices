@@ -11,11 +11,9 @@ class Game
 
   def score
     @frames.map.with_index do |frame, idx|
-      if idx < 9
-        frame.score + bonus_score(@frames, idx) # 1st to 9th frame
-      else
-        frame.score # 10th frame
-      end
+      frame_score = frame.score
+      frame_score += bonus_score(@frames, idx) unless frame == @frames.last
+      frame_score
     end.sum
   end
 
@@ -47,7 +45,8 @@ class Game
 
     if current_frame.strike?
       next_two_frames = [frames[idx + 1]&.shots, frames[idx + 2]&.shots].flatten
-      next_two_frames.first(2).sum(&:score)
+      next_two_shots = next_two_frames.first(2)
+      next_two_shots.sum(&:score)
     elsif current_frame.spare?
       next_shot = frames[idx + 1].shots.first
       next_shot.score
