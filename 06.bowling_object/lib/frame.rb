@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 class Frame
-  attr_reader :shots
+  MAX_SCORE = 10
+  MAX_SHOTS = 2
 
-  def initialize(shots)
+  attr_accessor :shots
+
+  def initialize(shots = [])
     @shots = shots
   end
 
@@ -12,10 +15,14 @@ class Frame
   end
 
   def strike?
-    @shots.first.score == 10
+    @shots.first.score == MAX_SCORE
   end
 
   def spare?
-    score == 10 && @shots.count == 2
+    score == MAX_SCORE && @shots.count == MAX_SHOTS
+  end
+
+  def move_to_next?
+    strike? || @shots.count >= MAX_SHOTS
   end
 end

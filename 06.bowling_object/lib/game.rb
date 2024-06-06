@@ -4,6 +4,8 @@ require_relative 'frame'
 require_relative 'shot'
 
 class Game
+  MAX_FRAMES = 10
+
   def initialize(score_marks)
     shots = parse_score_marks(score_marks)
     @frames = build_frames(shots)
@@ -25,18 +27,18 @@ class Game
 
   def build_frames(shots)
     frames = []
-    current_frame = []
+    current_frame = Frame.new()
 
     shots.each do |shot|
-      current_frame << shot
-      next if frames.size == 9
+      current_frame.shots << shot
+      next if frames.size + 1 == MAX_FRAMES
 
-      if shot.score == 10 || current_frame.size == 2
-        frames << Frame.new(current_frame) # 1st to 9th frame
-        current_frame = []
+      if current_frame.move_to_next?
+        frames << current_frame # 1st to 9th frame
+        current_frame = Frame.new()
       end
     end
-    frames << Frame.new(current_frame) # 10th frame
+    frames << current_frame # 10th frame
     frames
   end
 
