@@ -14,7 +14,7 @@ class Game
   def score
     @frames.map.with_index do |frame, idx|
       frame_score = frame.score
-      frame_score += bonus_score(@frames, idx) unless frame == @frames.last
+      frame_score += bonus_score(@frames, idx) if frame != @frames.last
       frame_score
     end.sum
   end
