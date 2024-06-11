@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
 require_relative 'frame'
-require_relative 'shot'
 
 class Game
   MAX_FRAMES = 10
 
   def initialize(score_marks)
-    shots = parse_score_marks(score_marks)
-    @frames = build_frames(shots)
+    @score_marks = score_marks
+    @frames = parse_score_marks.map { |sm| Frame.new(sm) }
   end
 
   def score
@@ -21,21 +20,17 @@ class Game
 
   private
 
-  def parse_score_marks(score_marks)
-    score_marks.split(',').map { |sm| Shot.new(sm) }
-  end
-
-  def build_frames(shots)
+  def parse_score_marks
     frames = []
-    current_frame = Frame.new()
+    current_frame = []
 
-    shots.each do |shot|
-      current_frame.shots << shot
-      next if frames.size + 1 == MAX_FRAMES
+    @score_marks.split(',').each do |score_mark|
+      current_frame << score_mark
+      next if frames.size == MAX_FRAMES - 1
 
-      if current_frame.move_to_next?
-        frames << current_frame # 1st to 9th frame
-        current_frame = Frame.new()
+      if score_mark == 'X' || current_frame.size == Frame::MAX_SHOTS
+        frames << current_frame.dup # 1st to 9th frame
+        current_frame.clear
       end
     end
     frames << current_frame # 10th frame

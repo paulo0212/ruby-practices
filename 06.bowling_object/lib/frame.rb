@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
+require_relative 'shot'
+
 class Frame
-  MAX_SCORE = 10
   MAX_SHOTS = 2
+  MAX_SCORE = Shot::MAX_SCORE
 
   attr_accessor :shots
 
-  def initialize(shots = [])
-    @shots = shots
+  def initialize(score_marks)
+    @shots = score_marks.map { |sm| Shot.new(sm) }
   end
 
   def score
@@ -19,10 +21,6 @@ class Frame
   end
 
   def spare?
-    score == MAX_SCORE && @shots.count == MAX_SHOTS
-  end
-
-  def move_to_next?
-    strike? || @shots.count >= MAX_SHOTS
+    @shots.size == MAX_SHOTS && score == MAX_SCORE
   end
 end
