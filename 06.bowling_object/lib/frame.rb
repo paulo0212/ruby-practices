@@ -6,6 +6,8 @@ class Frame
   MAX_SHOTS = 2
   MAX_SCORE = Shot::MAX_SCORE
 
+  attr_reader :shots
+
   def initialize(score_marks)
     @shots = score_marks.map { |sm| Shot.new(sm) }
   end
