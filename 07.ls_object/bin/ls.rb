@@ -16,4 +16,9 @@ opt.parse!(ARGV)
 path = ARGV[0] || '.'
 pathname = Pathname.new(path)
 
+if !pathname.exist?
+  puts "ls: #{pathname}: No such file or directory"
+  exit
+end
+
 Command.list_entries(pathname, **options)
