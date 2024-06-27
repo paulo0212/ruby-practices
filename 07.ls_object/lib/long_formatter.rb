@@ -17,17 +17,17 @@ class LongFormatter < BaseFormatter
   def format_entries(entries, reverse: false)
     entries = reverse ? entries.reverse : entries
 
-    entry_rows = entries.map { |entry| build_entry_data(entry) }
+    entry_rows = entries.map { |entry| build_entry_row_data(entry) }
     block_total = entry_rows.sum { |row| row[:blocks] }
     total = "total #{block_total}"
-    body = build_entries_data(entry_rows)
+    body = format_entry_rows(entry_rows)
 
     [total, body]
   end
 
   private
 
-  def build_entry_data(entry)
+  def build_entry_row_data(entry)
     {
       filemode: format_type_and_mode(entry),
       nlink: entry.nlink.to_s,
@@ -47,17 +47,17 @@ class LongFormatter < BaseFormatter
     "#{type}#{mode}"
   end
 
-  def build_entries_data(entries)
+  def format_entry_rows(entry_rows)
     max_sizes = %i[nlink owner group size].map do |key|
-      find_max_size(entries, key)
+      find_max_size(entry_rows, key)
     end
-    entries.map do |entry|
-      format_row(entry, *max_sizes)
+    entry_rows.map do |entry_row|
+      format_row(entry_row, *max_sizes)
     end
   end
 
-  def find_max_size(entries, key)
-    entries.map { |entry| entry[key].length }.max
+  def find_max_size(entry_rows, key)
+    entry_rows.map { |entry_row| entry_row[key].length }.max
   end
 
   def format_row(entry, max_nlink, max_owner, max_group, max_size)
