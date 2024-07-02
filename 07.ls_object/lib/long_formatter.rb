@@ -14,7 +14,7 @@ class LongFormatter < BaseFormatter
     '7' => 'rwx'
   }.freeze
 
-  def format_entries(entries, reverse: false)
+  def format(entries, reverse: false)
     entries = reverse ? entries.reverse : entries
 
     entry_rows = entries.map { |entry| build_entry_row_data(entry) }

@@ -32,6 +32,6 @@ class Command
 
   def format_entries(entries, long: false, reverse: false)
     formatter = long ? LongFormatter.new : ShortFormatter.new
-    formatter.format_entries(entries, reverse:)
+    formatter.format(entries, reverse:)
   end
 end

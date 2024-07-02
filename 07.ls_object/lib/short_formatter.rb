@@ -11,7 +11,7 @@ class ShortFormatter < BaseFormatter
     @win_size = IO.console.winsize[1]
   end
 
-  def format_entries(entries, reverse: false)
+  def format(entries, reverse: false)
     entries = reverse ? entries.reverse : entries
 
     @col_size = entries.map { |entry| entry.name.length }.max + PADDING
