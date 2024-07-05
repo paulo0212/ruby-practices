@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require_relative './entry'
-require_relative './short_formatter'
-require_relative './long_formatter'
+require_relative './short_format'
+require_relative './long_format'
 
 class Command
   def initialize(base_pathname, all: false, long: false, reverse: false)
@@ -31,7 +31,7 @@ class Command
   end
 
   def format_entries(entries, long: false, reverse: false)
-    formatter = long ? LongFormatter.new : ShortFormatter.new
-    formatter.format(entries, reverse:)
+    format = long ? LongFormat.new : ShortFormat.new
+    format.generate(entries, reverse:)
   end
 end

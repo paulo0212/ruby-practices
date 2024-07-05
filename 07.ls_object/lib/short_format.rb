@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'io/console'
-require_relative './base_formatter'
+require_relative './base_format'
 
-class ShortFormatter < BaseFormatter
+class ShortFormat < BaseFormat
   PADDING = 1
 
   def initialize
@@ -11,7 +11,7 @@ class ShortFormatter < BaseFormatter
     @win_size = IO.console.winsize[1]
   end
 
-  def format(entries, reverse: false)
+  def generate(entries, reverse: false)
     entries = reverse ? entries.reverse : entries
 
     @col_size = entries.map { |entry| entry.name.length }.max + PADDING

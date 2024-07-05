@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative './base_formatter'
+require_relative './base_format'
 
-class LongFormatter < BaseFormatter
+class LongFormat < BaseFormat
   MODE_TABLE = {
     '0' => '---',
     '1' => '--x',
@@ -14,7 +14,7 @@ class LongFormatter < BaseFormatter
     '7' => 'rwx'
   }.freeze
 
-  def format(entries, reverse: false)
+  def generate(entries, reverse: false)
     entries = reverse ? entries.reverse : entries
 
     entry_rows = entries.map { |entry| build_entry_row_data(entry) }
